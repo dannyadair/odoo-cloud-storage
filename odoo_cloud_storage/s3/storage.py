@@ -15,8 +15,27 @@ from connect import get_s3_bucket
 _logger = logging.getLogger(__name__)
 
 
-# FIXME: sync_buckets() goes here
-# FIXME: delete_bucket() goes here
+def sync_buckets(source_bucket, target_bucket, may_delete=None):
+    """Sync files between two buckets"""
+    _logger.info('Copying files from {} to {}'.format(source_bucket, target_bucket))
+
+    for key in source_bucket:
+        if key not in target_bucket:
+            key.copy(target_bucket, key)
+
+    if may_delete is not None:
+        # Delete files in the target bucket that are not in the source bucket
+        _logger.info('Deleting files in {} that are not in {}'.format(target_bucket, source_bucket))
+        for key in target_bucket:
+            if key not in source_bucket:
+                key.delete()
+
+
+def delete_bucket(bucket):
+    _logger.info('Deleting {}'.format(bucket))
+    for key in bucket:
+        key.delete()
+    bucket.delete()
 
 
 def exp_duplicate_database(db_original_name, db_name):
