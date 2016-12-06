@@ -18,7 +18,7 @@ http[s]://key:secret@[host[:port]/]bucketprefix
 
 The schema will determine the "is_secure" parameter for boto's S3Connection.
 
-The actual bucket name will be your specified prefix followed by "-YourDatabaseName".
+The actual bucket name will be your specified prefix followed by "-yourdatabasename" (lowercase for DNS compliance).
 When you duplicate a database, the corresponding bucket objects will be copied into the new bucket.
 
 ## Requirements

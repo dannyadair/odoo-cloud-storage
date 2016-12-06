@@ -38,9 +38,9 @@ def exp_duplicate_database(db_original_name, db_name):
 
     if storage.startswith('http://') or storage.startswith('https://') or storage.startwith('s3://'):
         # Copy bucket objects
-        source_bucket_url = storage + '-' + db_original_name
+        source_bucket_url = storage + '-' + db_original_name.lower()
         source_bucket = get_s3_bucket(source_bucket_url, autocreate=False)
-        target_bucket_url = storage + '-' + db_name
+        target_bucket_url = storage + '-' + db_name.lower()
         target_bucket = get_s3_bucket(target_bucket_url, autocreate=False)
         if source_bucket and not target_bucket:
             target_bucket = get_s3_bucket(target_bucket_url)
@@ -86,7 +86,7 @@ def exp_drop(db_name):
 
     if storage.startswith('http://') or storage.startswith('https://') or storage.startwith('s3://'):
         # Delete entire bucket
-        bucket_url = storage + '-' + db_name
+        bucket_url = storage + '-' + db_name.lower()
         bucket = get_s3_bucket(bucket_url, autocreate=False)
         if bucket:
             delete_bucket(bucket)

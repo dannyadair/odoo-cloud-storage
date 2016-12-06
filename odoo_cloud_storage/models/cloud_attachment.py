@@ -18,7 +18,8 @@ class S3Attachment(osv.osv):
     def _file_read(self, cr, uid, fname, bin_size=False):
         storage = self._storage(cr, uid)
         if storage.startswith('http://') or storage.startswith('https://') or storage.startwith('s3://'):
-            s3_bucket = get_s3_bucket(storage)
+            s3_bucket_url = storage + '-' + cr.dbname.lower()
+            s3_bucket = get_s3_bucket(s3_bucket_url)
             s3_key = s3_bucket.get_key(fname)
             if s3_key is None:
                 # Fall back to file system (e.g. migration still in progress)
@@ -37,7 +38,8 @@ class S3Attachment(osv.osv):
         def _file_write(self, cr, uid, value):
             storage = self._storage(cr, uid)
             if storage.startswith('http://') or storage.startswith('https://') or storage.startwith('s3://'):
-                s3_bucket = get_s3_bucket(storage)
+                s3_bucket_url = storage + '-' + cr.dbname.lower()
+                s3_bucket = get_s3_bucket(s3_bucket_url)
                 bin_value = value.decode('base64')
                 fname = hashlib.sha1(bin_value).hexdigest()
     
@@ -55,7 +57,8 @@ class S3Attachment(osv.osv):
         def _file_write(self, cr, uid, value, checksum):
             storage = self._storage(cr, uid)
             if storage.startswith('http://') or storage.startswith('https://') or storage.startwith('s3://'):
-                s3_bucket = get_s3_bucket(storage)
+                s3_bucket_url = storage + '-' + cr.dbname.lower()
+                s3_bucket = get_s3_bucket(s3_bucket_url)
                 bin_value = value.decode('base64')
                 fname = hashlib.sha1(bin_value).hexdigest()
     
@@ -76,7 +79,8 @@ class S3Attachment(osv.osv):
             cr.execute("SELECT COUNT(*) FROM ir_attachment WHERE store_fname = %s", (fname,))
             count = cr.fetchone()[0]
             if not count:
-                s3_bucket = get_s3_bucket(storage)
+                s3_bucket_url = storage + '-' + cr.dbname.lower()
+                s3_bucket = get_s3_bucket(s3_bucket_url)
                 s3_key = s3_bucket.get_key(fname)
                 if s3_key is not None:
                     s3_bucket.delete_key(s3_key)
