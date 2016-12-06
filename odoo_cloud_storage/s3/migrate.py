@@ -23,7 +23,7 @@ def migrate_files_to_s3():
         print(msg)
         return None
     
-    s3_bucket = connect_to_s3_bucket(BUCKET_URL)
+    s3_bucket = get_s3_bucket(BUCKET_URL)
 
     # Walk through all filestore subdirectories and upload files to S3
     num_uploaded = 0
