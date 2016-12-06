@@ -15,7 +15,7 @@ from connect import get_s3_bucket
 _logger = logging.getLogger(__name__)
 
 
-def sync_buckets(source_bucket, target_bucket, may_delete=None):
+def sync_buckets(source_bucket, target_bucket, delete_missing=False):
     """Sync files between two buckets"""
     _logger.info('Copying files from {} to {}'.format(source_bucket, target_bucket))
 
@@ -23,7 +23,7 @@ def sync_buckets(source_bucket, target_bucket, may_delete=None):
         if key not in target_bucket:
             key.copy(target_bucket, key)
 
-    if may_delete is not None:
+    if delete_missing:
         # Delete files in the target bucket that are not in the source bucket
         _logger.info('Deleting files in {} that are not in {}'.format(target_bucket, source_bucket))
         for key in target_bucket:
