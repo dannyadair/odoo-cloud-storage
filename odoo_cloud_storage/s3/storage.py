@@ -96,4 +96,4 @@ def exp_drop(db_name):
             shutil.rmtree(fs)
         return True
 
-openerp.service.db.exp_drop_database = exp_drop_database
+openerp.service.db.exp_drop = exp_drop
