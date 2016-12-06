@@ -1,4 +1,4 @@
-# Odoo S3 Storage
+# Odoo Cloud Storage
 
 Compatible with Odoo v8.0 and Odoo v9.0.
 
