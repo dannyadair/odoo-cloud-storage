@@ -1,0 +1,2 @@
+FILESTORE_ROOT = '/path/to/your/filestore/MyDatabase'
+BUCKET_URL = '(http[s]|s3)://key:secret@[host[:port]/]bucketname'   # full name, not just prefix
