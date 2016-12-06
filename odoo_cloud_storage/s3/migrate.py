@@ -5,7 +5,12 @@
 import os.path
 
 from connect import get_s3_bucket
-from migrate_conf import BUCKET_URL, FILESTORE_ROOT
+
+try:
+    from migrate_conf import BUCKET_URL, FILESTORE_ROOT
+except ImportError:
+    # Not configured
+    BUCKET_URL = FILESTORE_ROOT = None
 
 
 def migrate_files_to_s3():
@@ -13,6 +18,11 @@ def migrate_files_to_s3():
     Upload all existing files from the file system to S3.
     (but not delete them from the file system - do that manually)
     """
+    if BUCKET_URL is None or FILESTORE_ROOT is None:
+        msg = 'You need to copy "migrate_conf.py.in" to "migrate_conf.py" and configure it for your requirements.'
+        print(msg)
+        return None
+    
     s3_bucket = connect_to_s3_bucket(BUCKET_URL)
 
     # Walk through all filestore subdirectories and upload files to S3
@@ -33,4 +43,4 @@ def migrate_files_to_s3():
     cr.execute("UPDATE ir_attachment SET store_fname=substring(store_fname from 4) WHERE store_fname LIKE '%/%'")
 
     msg = 'Migration to S3 completed (%i uploaded, %i skipped)' % (num_uploaded, num_skipped)
-    print msg
+    print(msg)
