@@ -47,7 +47,7 @@ def get_s3_bucket(bucket_url, autocreate=True):
             ' Unable to establish a connection to S3.'
         )
 
-    if api_endpoint.find('amazon') == -1:
+    if api_endpoint and api_endpoint.find('amazon') == -1:
         # assume that non-amazon won't use <bucket>.<hostname> format
         calling_format = OrdinaryCallingFormat()
     else:
