@@ -13,7 +13,7 @@ s3://key:secret@bucketprefix
 If you use a non-Amazon S3-compatible cloud service, you can specify host and port of your API endpoint:
 
 ```
-(http[s])://key:secret@[host[:port]/]bucketprefix
+http[s]://key:secret@[host[:port]/]bucketprefix
 ```
 
 The schema will determine the "is_secure" parameter for boto's S3Connection.
@@ -22,7 +22,7 @@ The actual bucket name will be your specified prefix followed by "-YourDatabaseN
 When you duplicate a database, the corresponding bucket objects will be copied into the new bucket.
 
 ## Requirements
-[`boto`](https://github.com/boto/boto)
+[`boto`](https://github.com/boto/boto) needs to be installed on your Odoo application server(s).
 
 ## Copyright / License
 (C) 2016 [`Catalyst IT`](https://catalyst.net.nz/)
