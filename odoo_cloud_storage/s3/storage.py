@@ -22,6 +22,7 @@ def sync_buckets(source_bucket, target_bucket, delete_missing=False):
     for key in source_bucket:
         if key not in target_bucket:
             key.copy(target_bucket, key)
+        key.copy(target_bucket, key)
 
     if delete_missing:
         # Delete files in the target bucket that are not in the source bucket
@@ -51,7 +52,7 @@ def exp_duplicate_database(db_original_name, db_name):
     # Determine storage "on foot" with raw SQL
     db = openerp.sql_db.db_connect(db_original_name)
     with closing(db.cursor()) as cr:
-        cr.execute("""SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location""")
+        cr.execute("""SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location'""")
         result = cr.dictfetchone()
         storage = result and result['value'] or 'file'
 
@@ -83,7 +84,7 @@ def exp_drop(db_name):
     # Determine storage "on foot" with raw SQL (while the database is still there)
     db = openerp.sql_db.db_connect(db_name)
     with closing(db.cursor()) as cr:
-        cr.execute("""SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location""")
+        cr.execute("""SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location'""")
         result = cr.dictfetchone()
         storage = result and result['value'] or 'file'
     
