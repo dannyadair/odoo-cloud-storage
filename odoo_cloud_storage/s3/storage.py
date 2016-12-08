@@ -22,7 +22,6 @@ def sync_buckets(source_bucket, target_bucket, delete_missing=False):
     for key in source_bucket:
         if key not in target_bucket:
             key.copy(target_bucket, key)
-        key.copy(target_bucket, key)
 
     if delete_missing:
         # Delete files in the target bucket that are not in the source bucket
