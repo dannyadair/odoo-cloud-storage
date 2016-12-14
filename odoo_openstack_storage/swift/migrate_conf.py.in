@@ -1,0 +1,9 @@
+FILESTORE_ROOT = 'path/to/your/filestore/MyDatabase/'
+OPENSTACK_AUTH = {
+    'user': '',
+    'key': '',
+    'authurl': '',
+    'tenant_name': '',
+    'region_name': '',
+    'container_prefix': ''
+}
