@@ -4,6 +4,8 @@ import psycopg2
 
 import swiftclient
 
+from connect import SwiftClient
+
 try:
     from migrate_conf import (
         DB_HOST,
@@ -21,20 +23,15 @@ except ImportError:
 
 def migrate_files_to_openstack():
     """Duplicate of migrate_files_to_s3 for benchmarking upload speeds"""
-    # move this to connection.py
     container_name = OPENSTACK_AUTH['container_prefix'] + '-' + DB_NAME.lower()
-    auth_options = {
+    config_params = {
+        'user': OPENSTACK_AUTH['user'],
+        'key': OPENSTACK_AUTH['key'],
+        'authurl': OPENSTACK_AUTH['authurl'],
         'tenant_name': OPENSTACK_AUTH['tenant_name'],
         'region_name': OPENSTACK_AUTH['region_name'],
     }
-    conn = swiftclient.Connection(
-        user=OPENSTACK_AUTH['user'],
-        key=OPENSTACK_AUTH['key'],
-        authurl=OPENSTACK_AUTH['authurl'],
-        insecure=False,
-        auth_version=2,
-        os_options=auth_options
-    )
+    conn = SwiftClient(config_params)
     container = conn.put_container(container_name)
 
     num_uploaded = 0
