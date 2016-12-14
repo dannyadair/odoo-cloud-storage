@@ -110,3 +110,12 @@ class SwiftClient(object):
                 pass
             else:
                 raise
+
+    def delete_container(self, container_name):
+        try:
+            self.connection.delete_container(container_name)
+        except swiftclient.exceptions.ClientException as e:
+            if e.http_reason  == 'Not Found':
+                pass
+            else:
+                raise

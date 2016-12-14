@@ -2,6 +2,7 @@ from contextlib import closing
 import json
 import logging
 import os
+
 import swiftclient
 
 import openerp
@@ -80,10 +81,11 @@ def sync_containers(source_conn, target_conn, source_container_name, target_cont
             )
 
 
-# TODO: IMPLEMENT THIS PROPERLY USING LINGXIAN ADVICE
 def delete_container(conn, container_name):
     """Delete container and all objects inside it"""
-    for data in conn.get_container(container_name, full_listing=True)[1]:
+    attempts = 0
+    container = conn.get_container(container_name, full_listing=True)
+    for data in container[1]:
         try:
             conn.delete_object(container_name, data['name'])
         except swiftclient.exceptions.ClientException as e:
@@ -182,6 +184,12 @@ def exp_drop(db_name):
         cr.execute("""SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location'""")
         result = cr.dictfetchone()
         storage = result and result['value'] or 'file'
+        if storage == 'openstack':
+            cr.execute(
+                """SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location.openstack'"""
+            )
+            result = cr.dictfetchone()
+            config_params = result and json.loads(result['value'])
 
     openerp.modules.registry.RegistryManager.delete(db_name)
     openerp.sql_db.close_db(db_name)
@@ -199,15 +207,9 @@ def exp_drop(db_name):
         else:
             _logger.info('DROP DB: %s', db_name)
 
-    if storage == 'openstack':
-        # Delete entire bucket
-        with closing(db.cursor()) as cr:
-            cr.execute(
-                """SELECT value FROM ir_config_parameter WHERE key='ir_attachment.location.openstack'"""
-            )
-            result = cr.dictfetchone()
-            config_params = result and json.loads(result['value'])
 
+    if storage == 'openstack':
+        # delete container
         container_name = '{}-{}'.format(
                 config_params['container_prefix'],
                 db_name.lower()
