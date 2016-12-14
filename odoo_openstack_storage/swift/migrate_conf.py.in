@@ -1,0 +1,14 @@
+DB_NAME = ''
+DB_HOST = ''
+DB_PORT = ''
+DB_USER = ''
+DB_PASSWORD = ''
+FILESTORE_ROOT = 'path/to/your/filestore/MyDatabase/'
+OPENSTACK_AUTH = {
+    'user': '',
+    'key': '',
+    'authurl': '',
+    'tenant_name': '',
+    'region_name': '',
+    'container_prefix': ''
+}
