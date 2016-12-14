@@ -9,14 +9,13 @@ One called "ir_attachment.location" and one called "ir_attachment.location.opens
 * ir_attachment.location needs to be set to the value "openstack"
 * ir_attachment.location.openstack needs to be of the form:
 ```
-FILESTORE_ROOT = 'path/to/your/filestore/MyDatabase/'
-OPENSTACK_AUTH = {
-    'user': '',
-    'key': '',
-    'authurl': '',
-    'tenant_name': '',
-    'region_name': '',
-    'container_prefix': ''
+{
+    "user": "Your Openstack user",
+    "key": "Api key",
+    "authurl": "Auth url for your Openstack instance",
+    "tenant_name": "Name of the tenant",
+    "region_name": "Region",
+    "container_prefix": "Prefix for the container"
 }
 ```
 
@@ -34,6 +33,3 @@ License [`AGPL-3.0 or later'](http://www.gnu.org/licenses/agpl.html)
 Written by:
 * Danny W. Adair <danny@catalyst.net.nz>
 * Chris Herrmann <chris.herrmann@catalyst.net.nz>
-
-Inspired by [`Odoo-S3`](https://github.com/tvanesse/odoo-s3) (V9) by Thomas Vanesse <http://www.creo2.org>
-which in turn was partly based on [`document_amazons3`](https://apps.odoo.com/apps/modules/7.0/document_amazons3/) (V7) by Hugo Santos <hugo.santos@factolibre.com>

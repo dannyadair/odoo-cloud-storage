@@ -54,7 +54,10 @@ def migrate_files_to_openstack():
                     raise
             if num_uploaded%100 == 0:
                 print(
-                    '{} files uploaded, {} files skipped'.format(num_uploaded, num_skipped)
+                    '{} files uploaded, {} files skipped'.format(
+                        num_uploaded,
+                        num_skipped
+                    )
                 )
 
     db_conn = psycopg2.connect(

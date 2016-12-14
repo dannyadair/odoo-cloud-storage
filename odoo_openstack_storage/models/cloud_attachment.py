@@ -34,7 +34,9 @@ class OpenstackAttachment(osv.osv):
             )
             return config
         else:
-            raise ValueError('System parameter "{}" not configured'.format(config_param))
+            raise ValueError(
+                'System parameter "{}" not configured'.format(config_param)
+            )
 
     def _file_read(self, cr, uid, fname, bin_size=False):
         storage = self._storage(cr, uid)
@@ -59,7 +61,10 @@ class OpenstackAttachment(osv.osv):
             _logger.info(
                 'Failed to find file in object storage - failing back to filesystem'
             )
-            return super(OpenstackAttachment, self)._file_read(cr, uid, fname, bin_size=False)
+            return super(
+                OpenstackAttachment,
+                self
+            )._file_read(cr, uid, fname, bin_size=False)
 
     if openerp.release.version == '8.0':
         def _file_write(self, cr, uid, value):
