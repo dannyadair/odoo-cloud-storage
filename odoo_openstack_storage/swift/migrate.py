@@ -37,6 +37,7 @@ def migrate_files_to_openstack():
         cr.execute(
             "UPDATE ir_attachment SET store_fname=substring(store_fname from 4) WHERE store_fname LIKE '%/%'"
         )
+        db_conn.commit()
 
     container_name = OPENSTACK_AUTH['container_prefix'] + '-' + DB_NAME.lower()
     config_params = {
