@@ -23,6 +23,21 @@ except ImportError:
 
 def migrate_files_to_openstack():
     """Duplicate of migrate_files_to_s3 for benchmarking upload speeds"""
+    # manually update system paramters with postgres
+    db_conn = psycopg2.connect(
+        "dbname={} user={} password={} host={} port={}".format(
+            DB_NAME,
+            DB_USER,
+            DB_PASSWORD,
+            DB_HOST,
+            DB_PORT
+        )
+    )
+    with closing(db_conn.cursor()) as cr:
+        cr.execute(
+            "UPDATE ir_attachment SET store_fname=substring(store_fname from 4) WHERE store_fname LIKE '%/%'"
+        )
+
     container_name = OPENSTACK_AUTH['container_prefix'] + '-' + DB_NAME.lower()
     config_params = {
         'user': OPENSTACK_AUTH['user'],
@@ -49,10 +64,9 @@ def migrate_files_to_openstack():
                         contents=file('{}/{}'.format(dir_path, file_name))
                     )
                     num_uploaded += 1
-                    continue
                 else:
                     raise
-            if num_uploaded%100 == 0:
+            if (num_uploaded + num_skipped) % 100 == 0:
                 print(
                     '{} files uploaded, {} files skipped'.format(
                         num_uploaded,
@@ -60,21 +74,6 @@ def migrate_files_to_openstack():
                     )
                 )
 
-    db_conn = psycopg2.connect(
-        "dbname={} user={} password={} host={} port={}".format(
-            DB_NAME,
-            DB_USER,
-            DB_PASSWORD,
-            DB_HOST,
-            DB_PORT
-        )
-    )
-    with closing(db_conn.cursor()) as cr:
-        cr.execute(
-            "UPDATE ir_attachment SET store_fname=substring(store_fname from 4) WHERE store_fname LIKE '%/%'"
-        )
-
-    # manually update system paramters with postgres
     msg = 'Migrate finished: {} files uploaded. {} files skipped'.format(
         num_uploaded,
         num_skipped
