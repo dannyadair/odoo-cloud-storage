@@ -38,21 +38,18 @@ def migrate_files_to_openstack():
     num_skipped = 0
     for dir_path, dir_names, file_names in os.walk(FILESTORE_ROOT):
         for file_name in file_names:
-            try:
-                existing = conn.get_object(container_name, file_name)
+            existing = conn.get_object(container_name, file_name)
+            if existing is None:
+                conn.put_object(
+                    container_name,
+                    file_name,
+                    contents=file('{}/{}'.format(dir_path, file_name))
+                )
+                num_uploaded += 1
+            else:
                 num_skipped += 1
-            except swiftclient.exceptions.ClientException as e:
-                if e.http_reason == 'Not Found':
-                    conn.put_object(
-                        container_name,
-                        file_name,
-                        contents=file('{}/{}'.format(dir_path, file_name))
-                    )
-                    num_uploaded += 1
-                    continue
-                else:
-                    raise
-            if num_uploaded%100 == 0:
+
+            if (num_uploaded + num_skipped) % 100 == 0:
                 print(
                     '{} files uploaded, {} files skipped'.format(
                         num_uploaded,
