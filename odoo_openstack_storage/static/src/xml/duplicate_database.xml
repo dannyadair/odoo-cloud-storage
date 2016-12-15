@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+<t t-extend="DatabaseManager">
+<t t-jquery="#db_duplicate table.db_option_table" t-operation="append">
+                    <tr>
+                        <td><label for="duplicate_filestore">Duplicate file store:</label></td>
+                        <td><input type="checkbox" name="duplicate_filestore" /></td>
+                    </tr>
+</t>
+</t>
+</templates>

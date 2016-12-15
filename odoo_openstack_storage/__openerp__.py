@@ -14,5 +14,8 @@
     'external_dependencies': {
         'python': ['swiftclient'],
     },
+    'qweb' : [
+        "static/src/xml/*.xml",
+    ],
     'installable': True
 }

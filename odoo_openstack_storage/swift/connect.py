@@ -104,13 +104,13 @@ class SwiftClient(object):
 
     def put_container(self, container_name):
         try:
-            self.connection.get_container(self, container_name)
+            self.connection.get_container(container_name)
             raise SwiftConnectionError(
                 'Container {} already exists'.format(container_name)
             )
         except swiftclient.exceptions.ClientException as e:
             if e.http_reason == 'Not Found':
-                self.connection.put_container(self, container_name)
+                self.connection.put_container(container_name)
             else:
                 raise
 

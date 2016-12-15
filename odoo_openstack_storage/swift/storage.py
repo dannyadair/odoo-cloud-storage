@@ -96,7 +96,7 @@ def delete_container(conn, container_name):
     conn.delete_container(container_name)
 
 
-def exp_duplicate_database(db_original_name, db_name, duplicate_filestore=True):
+def exp_duplicate_database(db_original_name, db_name, duplicate_filestore=False):
     """Monkeypatched to duplicate cloud container instead of filesystem directory"""
     _logger.info('Duplicate database `%s` to `%s`.', db_original_name, db_name)
     openerp.sql_db.close_db(db_original_name)
