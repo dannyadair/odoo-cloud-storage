@@ -102,6 +102,18 @@ class SwiftClient(object):
             contents=contents
         )
 
+    def put_container(self, container_name):
+        try:
+            self.connection.get_container(self, container_name)
+            raise SwiftConnectionError(
+                'Container {} already exists'.format(container_name)
+            )
+        except swiftclient.exceptions.ClientException as e:
+            if e.http_reason == 'Not Found':
+                self.connection.put_container(self, container_name)
+            else:
+                raise
+
     def delete_object(self, container_name, object_name):
         try:
             self.connection.delete_object(container_name, object_name)
