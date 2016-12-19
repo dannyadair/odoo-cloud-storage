@@ -19,6 +19,9 @@ default file system storage.
 **At this point Odoo will add any new files to the Openstack container but will fall back
 to the file system if an existing file is not found there (yet) - see next steps.**
 
+Note: The names of the files in the database have been changed to no longer include the two
+diget prefix as the container is now 'flat'.
+
 #### 3 - Add migrate_conf
 Before the migration of existing files from the filesystem to Openstack object storage can be done
 migration configs must be set up.
