@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import os
 import logging
 
 import openerp
@@ -16,6 +17,14 @@ _logger = logging.getLogger(__name__)
 class OpenstackAttachment(osv.osv):
     """Read/Write/Delete attachments in Openstack Object storage instead of the file system"""
     _inherit = 'ir.attachment'
+
+    def _get_path(self, cr, uid, store_fname):
+        """Support retro compatibility"""
+        retro_fname = '{}/{}'.format(store_fname[:3], store_fname)
+        full_path = super(OpenstackAttachment, self)._full_path(cr, uid, retro_fname)
+        if os.path.isfile(full_path):
+            return retro_fname
+        return '{}/{}'.format(store_fname[:2], store_fname)
 
     def _storage_config(self, cr, uid, context=None):
         config_param = 'ir_attachment.location.openstack'
@@ -46,7 +55,7 @@ class OpenstackAttachment(osv.osv):
             cloud_object = conn.get_object(config_params['container_name'], fname)
             if cloud_object is None:
                 # Fall back to file system (e.g. migration still in progress)
-                fname = '%s/%s' % (fname[:2], fname)
+                fname = self._get_path(cr, uid, fname)
                 try:
                     return super(
                         OpenstackAttachment,

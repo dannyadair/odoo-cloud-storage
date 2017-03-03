@@ -4,6 +4,7 @@
 
 import base64
 import hashlib
+import os
 
 import openerp
 from openerp.osv import osv
@@ -15,6 +16,14 @@ class S3Attachment(osv.osv):
     """Read/write attachments from/to cloud storage instead of the file system"""
     _inherit = 'ir.attachment'
 
+    def _get_path(self, cr, uid, store_fname):
+        """Support retro compatibility"""
+        retro_fname = '{}/{}'.format(store_fname[:3], store_fname)
+        full_path = super(S3Attachment, self)._full_path(cr, uid, retro_fname)
+        if os.path.isfile(full_path):
+            return retro_fname
+        return '{}/{}'.format(store_fname[:2], store_fname)
+
     def _file_read(self, cr, uid, fname, bin_size=False):
         storage = self._storage(cr, uid)
         if storage.startswith('http://') or storage.startswith('https://') or storage.startwith('s3://'):
@@ -23,7 +32,7 @@ class S3Attachment(osv.osv):
             s3_key = s3_bucket.get_key(fname)
             if s3_key is None:
                 # Fall back to file system (e.g. migration still in progress)
-                fname = '%s/%s' % (fname[:2], fname)
+                fname = self._get_path(cr, uid, fname)
                 try:
                     return super(S3Attachment, self)._file_read(cr, uid, fname, bin_size=False)
                 except OSError:

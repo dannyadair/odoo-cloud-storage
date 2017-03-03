@@ -33,11 +33,7 @@ def migrate_files_to_openstack():
             DB_PORT
         )
     )
-    with closing(db_conn.cursor()) as cr:
-        cr.execute(
-            "UPDATE ir_attachment SET store_fname=substring(store_fname from 4) WHERE store_fname LIKE '%/%'"
-        )
-        db_conn.commit()
+    db_cur = db_conn.cursor()
 
     container_name = OPENSTACK_AUTH['container_prefix'] + '-' + DB_NAME.lower()
     config_params = {
@@ -47,20 +43,36 @@ def migrate_files_to_openstack():
         'tenant_name': OPENSTACK_AUTH['tenant_name'],
         'region_name': OPENSTACK_AUTH['region_name'],
     }
-    conn = SwiftClient(config_params)
-    container = conn.put_container(container_name)
+    swift_conn = SwiftClient(config_params)
+    container = swift_conn.put_container(container_name)
 
     num_uploaded = 0
     num_skipped = 0
+
     for dir_path, dir_names, file_names in os.walk(FILESTORE_ROOT):
         for file_name in file_names:
-            existing = conn.get_object(container_name, file_name)
+            existing = swift_conn.get_object(container_name, file_name)
             if existing is None:
-                conn.put_object(
+                swift_conn.put_object(
                     container_name,
                     file_name,
                     contents=file('{}/{}'.format(dir_path, file_name))
                 )
+
+                # Flat structure no longer needs directory name in the store_fname
+                cmd = "UPDATE ir_attachment SET store_fname=substring(store_fname from {}) where store_fname = '{}/{}'"
+
+                # account for retro compatibility
+                db_cur.execute(cmd.format(4, file_name[:2], file_name))
+                rows_affected = db_cur.rowcount
+
+                if rows_affected == 1:
+                    db_conn.commit()
+
+                else:
+                    db_cur.execute(cmd.format(5, file_name[:3], file_name))
+                    db_conn.commit()
+
                 num_uploaded += 1
             else:
                 num_skipped += 1
